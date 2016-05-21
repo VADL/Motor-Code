@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     bool initSucess = true;
    // rc_initialize_imu(ptr, config);
     int measureCount = 10000;
-    fstream data(fname.c_str());
+    ofstream data(fname.c_str());
 
 //	data.open(fname.c_str());
 
