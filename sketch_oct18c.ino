@@ -59,7 +59,7 @@ if (digitalRead(hall2)==1){
  }
 }
 
- int bwd(){
+ int bwd(){ //not being used right now
    while(1){
 if (digitalRead(2)==1){
     if (digitalRead(1)==0){
