@@ -1,4 +1,5 @@
 Boolean Expressions:
+
 d = (~a & ~b & c) | (a & b & ~c);
 
 e = (~b & c) | (b & ~c);
