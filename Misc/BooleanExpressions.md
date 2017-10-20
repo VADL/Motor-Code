@@ -11,3 +11,5 @@ g = (~a & b) | (a & ~b);
 h = (~a & b & c) | (a & ~b & ~c);
 
 i = (~a & c) | (a & ~c);
+
+![text](https://github.com/VADL/Motor-Code/blob/master/Misc/Capture.PNG)
