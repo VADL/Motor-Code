@@ -1,0 +1,57 @@
+extern "C" {
+#include <roboticscape.h>
+#include <rc_usefulincludes.h>
+}
+#include <math.h>
+#include <unistd.h>
+
+int main(int argc, char * argv[])
+{
+        //GP0 low
+        unsigned int GPIO1_25 = 57;
+        unsigned int GPIO1_17 = 49;
+        unsigned int GPIO3_20 = 116;
+
+        // GP1 high
+        unsigned int GPIO3_2 = 98;
+        unsigned int GPIO3_1 = 97;
+        unsigned int GPIO2_3 = 67;
+
+        if(rc_initialize())
+        {
+                fprintf(stderr, "rc_init");
+        }
+
+        rc_gpio_export(GPIO1_25);
+        rc_gpio_export(GPIO1_17);
+        rc_gpio_export(GPIO3_20);
+
+        rc_gpio_export(GPIO3_2);
+        rc_gpio_export(GPIO3_1);
+        rc_gpio_export(GPIO2_3);
+
+        rc_gpio_set_dir(int(GPIO1_25), OUTPUT_PIN);
+        rc_gpio_set_dir(int(GPIO1_17), OUTPUT_PIN);
+        rc_gpio_set_dir(int(GPIO3_20), OUTPUT_PIN);
+        rc_gpio_set_dir(int(GPIO3_2), OUTPUT_PIN);
+        rc_gpio_set_dir(int(GPIO3_1), OUTPUT_PIN);
+        rc_gpio_set_dir(int(GPIO2_3), OUTPUT_PIN);
+
+        while (true)
+        {
+                int hall1;
+                int hall2;
+                int hall3;
+
+                hall1 = rc_gpio_get_value(GPIO1_25);
+                hall2 = rc_gpio_get_value(GPIO1_17);
+                hall3 = rc_gpio_get_value(GPIO3_20);
+
+                printf("Hall Values: %i %i %i\n", hall1, hall2, hall3);
+                usleep(30000);
+        }
+        return 0;
+}
+
+
+

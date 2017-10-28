@@ -1,0 +1,67 @@
+import Adafruit_BBIO.GPIO as GPIO
+
+##setup
+#hall sensors
+halla = "P9_11"
+hallb = "P9_12"
+hallc = "P9_13"
+
+GPIO.setup(halla, GPIO.IN)
+GPIO.setup(hallb, GPIO.IN)
+GPIO.setup(hallc, GPIO.IN)
+
+#FET drivers
+w1_l = "P8_11"
+w1_h = "P8_12"
+w2_l = "P8_14"
+w2_h = "P8_15"
+w3_l = "P8_16"
+w3_h = "P8_17"
+GPIO.setup(w1_l,GPIO.OUT)
+GPIO.setup(w1_h,GPIO.OUT)
+GPIO.setup(w2_l,GPIO.OUT)
+GPIO.setup(w2_h,GPIO.OUT)
+GPIO.setup(w3_l,GPIO.OUT)
+GPIO.setup(w3_h,GPIO.OUT)
+
+#setup interrupts
+GPIO.add_event_detect(halla, GPIO.BOTH)
+GPIO.add_event_detect(hallb, GPIO.BOTH)
+GPIO.add_event_detect(hallc, GPIO.BOTH)
+
+a,b,c = 0,0,0
+
+if GPIO.event_detected(halla):
+    a = GPIO.input(halla)
+    print "a fired"
+
+if GPIO.event_detected(hallb):
+    b = GPIO.input(hallb)
+    print "b fired"
+
+if GPIO.event_detected(hallc):
+    c = GPIO.input(hallc)
+    print "c fired"
+
+while(1):
+    d = (~a & ~b & c) | (a & b & ~c)
+    e = (~b & c) | (b & ~c)
+    f = (~a & b & ~c) | (a & ~b & c)
+    g = (~a & b) | (a & ~b)
+    h = (~a & b & c) | (a & ~b & ~c)
+    i = (~a & c) | (a & ~c)
+
+    GPIO.output(w1_l,h)
+    GPIO.output(w1_h,i)
+    GPIO.output(w2_l,f)
+    GPIO.output(w2_h,g)
+    GPIO.output(w3_l,d)
+    GPIO.output(w3_h,e)
+
+    #print a,b,c,"->",d,e,f,g,h,i
+    print GPIO.input(halla), GPIO.input(hallb), GPIO.input(hallc)
+
+
+GPIO.cleanup()
+
+
