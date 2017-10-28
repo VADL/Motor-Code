@@ -1,56 +1,119 @@
 extern "C" {
-#include <roboticscape.h>
-#include <rc_usefulincludes.h>
+  #include <roboticscape.h>
+  #include <rc_usefulincludes.h>
 }
-#include <math.h>
-#include <unistd.h>
 
-int main(int argc, char * argv[])
+#include <stdio.h>
+
+enum Phase {
+	Phase0 = 0;
+	Phase1 = 1;
+	Phase2 = 2;
+	Phase3 = 3;
+	Phase4 = 4;
+	Phase5 = 5;
+	InvalidPhase = 6;
+};
+
+Phase nextPhase [] = {
+	Phase5,
+	Phase0,
+	Phase1,
+	Phase2,
+	Phase3,
+	Phase4,
+	InvalidPhase
+};
+
+Phase sensorToPhase[] = {
+	InvalidPhase,
+	Phase1,
+	Phase3,
+	Phase3,
+	Phase5,
+	Phase0,
+	Phase4
+};
+
+const int _phaseSettings[][7] = {
+	{ 0, -1, 1 },
+{ 1, -1, 0 },
+{ 1, 0, -1 },
+{ 0, 1, -1 },
+{ -1, 1, 0 },
+{ -1, 0, 1 },
+};
+
+
+
+// Hall Sensors, P9_11, P9_12, P9_13
+unsigned int hA = 30; //P9_11
+unsigned int hB = 60; // P9_12
+unsigned int hC = 31; //P9_13
+
+// Windings  P8_8, P8_10, P8_12, P8_14, P8_16, P8_18
+int w1_l = 67; //P8_8
+int w1_h = 68; //P8_10
+int w2_l = 44; //P8_12
+int w2_h = 16; //P8_14
+int w3_l = 18; //P8_16
+int w3_h = 65; //P8_18
+
+
+void setup(){
+rc_initialize();
+
+//int rc_gpio_export(unsigned int gpio);
+//int rc_gpio_export(unsigned int gpio);
+//int rc_gpio_export(unsigned int gpio);
+
+int rc_gpio_set_dir(w1_l, OUTPUT_PIN);
+int rc_gpio_set_dir(w1_h, OUTPUT_PIN);
+int rc_gpio_set_dir(w2_l, OUTPUT_PIN);
+int rc_gpio_set_dir(w2_h, OUTPUT_PIN);
+int rc_gpio_set_dir(w3_l, OUTPUT_PIN);
+int rc_gpio_set_dir(w3_h, OUTPUT_PIN);
+
+
+}
+
+
+int main(int argc, char* argv[])
 {
-        //GP0 low
-        unsigned int GPIO1_25 = 57;
-        unsigned int GPIO1_17 = 49;
-        unsigned int GPIO3_20 = 116;
+setup();
+int halls = atoi(argv[1]);
+/* 
+ *  |  sensor  | 0 | 1 | 2 | 3 | 4 | 5 |
+ *  |:--------:|:-:|:-:|:-:|:-:|:-:|:-:|
+ *  |  Hall A  | 1 | 1 | 1 | 0 | 0 | 0 |
+ *  |  Hall B  | 0 | 0 | 1 | 1 | 1 | 0 |
+ *  |  Hall C  | 1 | 0 | 0 | 0 | 1 | 1 |
+ *
+ *  |   input  | 0 | 1 | 2 | 3 | 4 | 5 |
+ *  |:--------:|:-:|:-:|:-:|:-:|:-:|:-:|
+ *  | position | 5 | 1 | 3 | 2 | 6 | 4 |
+ *
+ *  |  output  | 0 | 1 | 2 | 3 | 4 | 5 |
+ *  |:--------:|:-:|:-:|:-:|:-:|:-:|:-:|
+ *  |  Phase A | - | - | Z | + | + | Z |
+ *  |  Phase B | + | Z | - | - | Z | + |
+ *  |  Phase C | Z | + | + | Z | - | - |
+*/
+Phase _currentPhase = sensorToPhase[halls];
+Phase _nextPhase = nextPhase[_currentPhase];
 
-        // GP1 high
-        unsigned int GPIO3_2 = 98;
-        unsigned int GPIO3_1 = 97;
-        unsigned int GPIO2_3 = 67;
+w1_l = _phaseSettings[_nextPhase][1];
+w1_h = _phaseSettings[_nextPhase][1];
+w2_l = _phaseSettings[_nextPhase][2];
+w2_h = _phaseSettings[_nextPhase][2];
+w3_l = _phaseSettings[_nextPhase][0];
+w3_h = _phaseSettings[_nextPhase][0];
 
-        if(rc_initialize())
-        {
-                fprintf(stderr, "rc_init");
-        }
+printf(“%i %i %i %i %i %i”,w1_l,w1_h,w2_l,w2_h,w3_l,w3_h);
+sleep(1);
 
-        rc_gpio_export(GPIO1_25);
-        rc_gpio_export(GPIO1_17);
-        rc_gpio_export(GPIO3_20);
+return 0;
 
-        rc_gpio_export(GPIO3_2);
-        rc_gpio_export(GPIO3_1);
-        rc_gpio_export(GPIO2_3);
-
-        rc_gpio_set_dir(int(GPIO1_25), OUTPUT_PIN);
-        rc_gpio_set_dir(int(GPIO1_17), OUTPUT_PIN);
-        rc_gpio_set_dir(int(GPIO3_20), OUTPUT_PIN);
-        rc_gpio_set_dir(int(GPIO3_2), OUTPUT_PIN);
-        rc_gpio_set_dir(int(GPIO3_1), OUTPUT_PIN);
-        rc_gpio_set_dir(int(GPIO2_3), OUTPUT_PIN);
-
-        while (true)
-        {
-                int hall1;
-                int hall2;
-                int hall3;
-
-                hall1 = rc_gpio_get_value(GPIO1_25);
-                hall2 = rc_gpio_get_value(GPIO1_17);
-                hall3 = rc_gpio_get_value(GPIO3_20);
-
-                printf("Hall Values: %i %i %i\n", hall1, hall2, hall3);
-                usleep(30000);
-        }
-        return 0;
 }
 
 
