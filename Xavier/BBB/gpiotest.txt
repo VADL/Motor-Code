@@ -1,0 +1,31 @@
+extern "C" {
+  #include <roboticscape.h>
+  #include <rc_usefulincludes.h>
+}
+
+#include <stdio.h>
+
+// Windings  P8_8, P8_10, P8_12, P8_14, P8_16, P8_18
+int w1_l = 67; //P8_8
+
+
+
+void setup(){
+rc_initialize();
+
+int rc_gpio_set_dir(w1_l, OUTPUT_PIN);
+
+}
+
+
+int main(int argc, char* argv[])
+{
+setup();
+rc_gpio_set_value_mmap(w1_h, HIGH);
+usleep(500000);
+rc_gpio_set_value_mmap(wi_h, LOW);
+
+}
+
+
+
