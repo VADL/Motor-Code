@@ -1,0 +1,171 @@
+﻿extern "C" {
+  #include <roboticscape.h>
+  #include <rc_usefulincludes.h>
+}
+
+#include <stdio.h>
+#include <poll.h>
+
+enum Phase {
+	Phase0 = 0,
+	Phase1 = 1,
+	Phase2 = 2,
+	Phase3 = 3,
+	Phase4 = 4,
+	Phase5 = 5,
+	InvalidPhase = 6,
+};
+
+Phase nextPhase [] = {
+	Phase5,
+	Phase0,
+	Phase1,
+	Phase2,
+	Phase3,
+	Phase4,
+	InvalidPhase
+};
+
+Phase sensorToPhase[] = {
+	InvalidPhase,
+	Phase1,
+	Phase3,
+	Phase2,
+	Phase5,
+	Phase0,
+	Phase4
+};
+
+const int _phaseSettings[][7] = {
+	{ 0, -1, 1 },
+{ 1, -1, 0 },
+{ 1, 0, -1 },
+{ 0, 1, -1 },
+{ -1, 1, 0 },
+{ -1, 0, 1 },
+};
+
+unsigned int hA = 30; //P9_11
+unsigned int hB = 117; // P9_25
+unsigned int hC = 2; //P9_22
+
+int w1_l = 67; //P8_8
+int w1_h = 26; //P8_14
+int w2_l = 11; //P8_32
+int w2_h = 81; //P8_34
+int w3_l = 80; //P8_36
+int w3_h = 73; //P8_44
+
+
+void setup(){
+rc_initialize();
+
+//pin handling
+rc_gpio_export(hA);
+rc_gpio_export(hB);
+rc_gpio_export(hC);
+rc_gpio_set_dir(hA, INPUT_PIN);
+rc_gpio_set_dir(hB, INPUT_PIN);
+rc_gpio_set_dir(hC, INPUT_PIN);
+c_gpio_set_edge(hA, EDGE_BOTH);
+c_gpio_set_edge(hB, EDGE_BOTH);
+c_gpio_set_edge(hC, EDGE_BOTH);
+
+rc_gpio_export(w1_l);
+rc_gpio_export(w1_h);
+rc_gpio_export(w2_l);
+rc_gpio_export(w2_h);
+rc_gpio_export(w3_l);
+rc_gpio_export(w3_h);
+rc_gpio_set_dir(w1_l, OUTPUT_PIN);
+rc_gpio_set_dir(w1_h, OUTPUT_PIN);
+rc_gpio_set_dir(w2_l, OUTPUT_PIN);
+rc_gpio_set_dir(w2_h, OUTPUT_PIN);
+rc_gpio_set_dir(w3_l, OUTPUT_PIN);
+rc_gpio_set_dir(w3_h, OUTPUT_PIN);
+}
+
+void readHalls(int *hallA,int *hallB,int *hallC){
+//interrupt handing
+struct pollfd fd[3];
+int timeout = 10;
+int hA_fd = rc_gpio_fd_open(hA);
+int hB_fd = rc_gpio_fd_open(hB);
+int hC_fd = rc_gpio_fd_open(hC);
+
+fd[0].fd = hA_fd;
+fd[1].fd = hB_fd;
+fd[2].fd = hC_fd;
+
+fd[0].events = POLLPRI|POLLERR;
+fd[1].events = POLLPRI|POLLERR;
+fd[2].events = POLLPRI|POLLERR;
+
+char buf[3];
+read(fd[0].fd, buf, 1);
+poll(fd,3,timeout);
+if(fd[0].revents & POLLPRI){
+printf("INTERRUPT A!!!\n");
+lseek(fd[0].fd,0,SEEK_SET);
+read(fd[0].fd,buf,1);
+*hA = rc_gpio_get_value_mmap(hA);
+}
+
+read(fd[1].fd, buf, 1);
+poll(fd,3,timeout);
+if(fd[1].revents & POLLPRI){
+printf("INTERRUPT B!!!\n");
+lseek(fd[1].fd,0,SEEK_SET);
+read(fd[1].fd,buf,1);
+*hB = rc_gpio_get_value_mmap(hB);
+}
+
+read(fd[2].fd, buf, 1);
+poll(fd,3,timeout);
+if(fd[2].revents & POLLPRI){
+printf("INTERRUPT A!!!\n");
+lseek(fd[2].fd,0,SEEK_SET);
+read(fd[2].fd,buf,1);
+*hC = rc_gpio_get_value_mmap(hC);
+}
+
+rc_gpio_fd_close(hA_fd);
+rc_gpio_fd_close(hB_fd);
+rc_gpio_fd_close(hC_fd);
+}
+
+int main(int argc, char* argv[])
+{
+setup();
+
+int hA_val = rc_gpio_get_value_mmap(hA);
+int hB_val = rc_gpio_get_value_mmap(hB);
+int hC_val = rc_gpio_get_value_mmap(hC);
+
+while(1){
+
+readHalls(&hA_val, &hB_val, &hC_val);
+
+int halls = hC<<2 | hB<<1 | hA;
+
+Phase _currentPhase = sensorToPhase[halls];
+Phase _nextPhase = nextPhase[_currentPhase];
+
+int w1_h_val = _phaseSettings[_nextPhase][0];
+int w1_l_val = _phaseSettings[_nextPhase][1];
+int w2_h_val = _phaseSettings[_nextPhase][2];
+int w2_l_val = _phaseSettings[_nextPhase][3];
+int w3_h_val = _phaseSettings[_nextPhase][4];
+int w3_l_val = _phaseSettings[_nextPhase][5];
+
+printf("Current Phase = %i\n", _currentPhase);
+printf("Next Phase = %i\n", _nextPhase);
+printf("%i %i %i %i %i i%\n", w1_h_val, w1_l_val, w2_h_val, w2_l_val, 
+	w3_h_val, w3_l_val);
+}
+return 0;
+
+}
+
+
+

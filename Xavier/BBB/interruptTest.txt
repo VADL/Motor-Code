@@ -1,0 +1,53 @@
+extern "C" {
+  #include <roboticscape.h>
+  #include <rc_usefulincludes.h>
+}
+
+#include <stdio.h>
+#include <poll.h>
+
+unsigned int hA = 30; //P9_11
+unsigned int hB = 60; // P9_12
+
+int main(void){
+struct pollfd fd[1];
+int timeout = 3000;
+
+printf("Eporting...\n");
+rc_gpio_export(hA);
+rc_gpio_export(hB);
+
+printf("Setting Direction...\n");
+rc_gpio_set_dir(hA, INPUT_PIN);
+rc_gpio_set_dir(hB, OUTPUT_PIN);
+
+rc_gpio_set_edge(hA, EDGE_BOTH);
+int hA_fd = rc_gpio_fd_open(hA);
+printf("hey there %d\n",hA_fd);
+
+fd[0].fd = hA_fd;
+fd[0].events = POLLPRI|POLLERR;
+
+char buf[1];
+int count = 0;
+printf("initializing polling...");
+read(fd[0].fd, buf, 1);
+while(count < 10){
+int rc = poll(fd, 1, timeout);
+//printf("%i\n",rc);
+if(fd[0].revents & POLLPRI){
+
+printf("INTERRUPT!!!\n");
+lseek(fd[0].fd,0,SEEK_SET);
+read(fd[0].fd,buf,1);
+printf("%i\n",rc_gpio_get_value_mmap(hA));
+count++;
+}
+}
+
+rc_gpio_fd_close(hA_fd);
+
+
+return 0;
+}
+

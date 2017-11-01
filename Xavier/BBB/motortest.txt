@@ -1,4 +1,4 @@
-extern "C" {
+﻿extern "C" {
   #include <roboticscape.h>
   #include <rc_usefulincludes.h>
 }
@@ -6,13 +6,13 @@ extern "C" {
 #include <stdio.h>
 
 enum Phase {
-	Phase0 = 0;
-	Phase1 = 1;
-	Phase2 = 2;
-	Phase3 = 3;
-	Phase4 = 4;
-	Phase5 = 5;
-	InvalidPhase = 6;
+	Phase0 = 0,
+	Phase1 = 1,
+	Phase2 = 2,
+	Phase3 = 3,
+	Phase4 = 4,
+	Phase5 = 5,
+	InvalidPhase = 6,
 };
 
 Phase nextPhase [] = {
@@ -67,12 +67,12 @@ rc_initialize();
 //int rc_gpio_export(unsigned int gpio);
 //int rc_gpio_export(unsigned int gpio);
 
-int rc_gpio_set_dir(w1_l, OUTPUT_PIN);
-int rc_gpio_set_dir(w1_h, OUTPUT_PIN);
-int rc_gpio_set_dir(w2_l, OUTPUT_PIN);
-int rc_gpio_set_dir(w2_h, OUTPUT_PIN);
-int rc_gpio_set_dir(w3_l, OUTPUT_PIN);
-int rc_gpio_set_dir(w3_h, OUTPUT_PIN);
+rc_gpio_set_dir(w1_l, OUTPUT_PIN);
+rc_gpio_set_dir(w1_h, OUTPUT_PIN);
+rc_gpio_set_dir(w2_l, OUTPUT_PIN);
+rc_gpio_set_dir(w2_h, OUTPUT_PIN);
+rc_gpio_set_dir(w3_l, OUTPUT_PIN);
+rc_gpio_set_dir(w3_h, OUTPUT_PIN);
 
 
 }
