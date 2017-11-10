@@ -1,5 +1,5 @@
 volatile int val = 0;
-#define duty 30 //input a percentage 0->100
+#define duty 90 //input a percentage 0->100
 #define dir LOW //direction of motor.
 
 
