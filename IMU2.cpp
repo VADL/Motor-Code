@@ -14,7 +14,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     rc_initialize();
-    std::string fname = "~/IMU_Log.txt";
+    std::string fname = "~/Motor-Code/IMU_Log.txt";
     rc_imu_data_t *ptr = new rc_imu_data_t;
     
 
