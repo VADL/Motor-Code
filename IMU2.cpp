@@ -29,24 +29,29 @@ int main(int argc, char *argv[])
 
 //	data.open(fname.c_str());
 
-      	if (!data)
-  	{
-        data << "logging begin"<<std::endl;
-        for(int i = 0; i<measureCount;++i) {
-            data << "acceleration data" << std::endl;
-            data <<  ptr->accel[0] <<std::endl;
-            data <<  ptr->accel[1] <<std::endl;
-            data <<  ptr->accel[2] <<std::endl; // units of m/s^2
-            data << "gyro data"    <<std::endl;
-            data <<  ptr->gyro[0]  <<std::endl;
-            data <<  ptr->gyro[1]  <<std::endl;
-            data <<  ptr->gyro[2]  <<std::endl;// units of degrees/s
-            data << "temp data"    <<std::endl; /// units of degrees Celsius
-            data <<  ptr -> temp   <<std::endl;
-	    data << std::endl;
-        }
-        rc_power_off_imu();
-  	}
-  	else cout << "Unable to open file";
+//    if (!data)
+//  	{
+//        data << "logging begin"<<std::endl;
+//        for(int i = 0; i<measureCount;++i) {
+//            data << "acceleration data" << std::endl;
+//            data <<  ptr->accel[0] <<std::endl;
+//            data <<  ptr->accel[1] <<std::endl;
+//            data <<  ptr->accel[2] <<std::endl; // units of m/s^2
+//            data << "gyro data"    <<std::endl;
+//            data <<  ptr->gyro[0]  <<std::endl;
+//            data <<  ptr->gyro[1]  <<std::endl;
+//            data <<  ptr->gyro[2]  <<std::endl;// units of degrees/s
+//            data << "temp data"    <<std::endl; /// units of degrees Celsius
+//            data <<  ptr -> temp   <<std::endl;
+//	    data << std::endl;
+//        }
+//        rc_power_off_imu();
+//  	}
+//  	else cout << "Unable to open file";
+    
+    std::cout << "acceleration data" << std::endl;
+    std::cout << "x: "<< ptr->accel[0] <<std::endl;
+    std::cout << "y: "<< ptr->accel[1] <<std::endl;
+    std::cout << "z: "<< ptr->accel[2] <<std::endl;
     return 0;
 }
