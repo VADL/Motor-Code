@@ -25,11 +25,11 @@ int main(int argc, char *argv[])
     bool initSucess = true;
    // rc_initialize_imu(ptr, config);
     int measureCount = 10000;
-    ofstream data(fname.c_str());
+    fstream data(fname.c_str());
 
 //	data.open(fname.c_str());
 
-      	if (data.is_open()&&initSucess)
+      	if (!data)
   	{
         data << "logging begin"<<std::endl;
         for(int i = 0; i<measureCount;++i) {
