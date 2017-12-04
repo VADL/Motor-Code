@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
   }
     
     
-    fstream data(fname.c_str());
+   std: fstream data(fname.c_str());
 
 
 
