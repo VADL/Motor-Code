@@ -26,39 +26,27 @@ int main(int argc, char *argv[])
   if(rc_initialize_imu(&imu_data, config) != 0){
     std::cerr << "Failed to init imu\n";
   }
-  //    int measureCount = 10000;
-  //    ofstream data(fname.c_str());
+    
+    
+    fstream data(fname.c_str());
 
-  //	data.open(fname.c_str());
 
-  //    if (!data)
-  //  	{
-  //        data << "logging begin"<<std::endl;
-  //        for(int i = 0; i<measureCount;++i) {
-  //            data << "acceleration data" << std::endl;
-  //            data <<  ptr->accel[0] <<std::endl;
-  //            data <<  ptr->accel[1] <<std::endl;
-  //            data <<  ptr->accel[2] <<std::endl; // units of m/s^2
-  //            data << "gyro data"    <<std::endl;
-  //            data <<  ptr->gyro[0]  <<std::endl;
-  //            data <<  ptr->gyro[1]  <<std::endl;
-  //            data <<  ptr->gyro[2]  <<std::endl;// units of degrees/s
-  //            data << "temp data"    <<std::endl; /// units of degrees Celsius
-  //            data <<  ptr -> temp   <<std::endl;
-  //	    data << std::endl;
-  //        }
-  //        rc_power_off_imu();
-  //  	}
-  //  	else cout << "Unable to open file";
 
   while (rc_get_state() != EXITING){
 
     rc_read_accel_data(&imu_data);
-    std::cout << "acceleration data" << std::endl;
-    std::cout << "x: "<< imu_data.accel[0] <<std::endl;
-    std::cout << "y: "<< imu_data.accel[1] <<std::endl;
-    std::cout << "z: "<< imu_data.accel[2] <<std::endl;
-    usleep(1000000);
+    rc_read_gyro_data(&imu_data);
+    data << "acceleration data" << std::endl;
+    data << "x: "<< imu_data.accel[0] <<std::endl;
+    data << "y: "<< imu_data.accel[1] <<std::endl;
+    data << "z: "<< imu_data.accel[2] <<std::endl;
+    data << "acceleration data" << std::endl;
+    data << "roll: "<< imu_data.gyro[0] <<std::endl;
+    data << "pitch: "<< imu_data.gyro[1] <<std::endl;
+    data << "yaw: "<< imu_data.gyro[2] <<std::endl;
+    data <<std::endl<<std::endl;
+    usleep(1000);
   }
+    data.close();
   return 0;
 }
