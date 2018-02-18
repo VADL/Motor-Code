@@ -15,6 +15,11 @@ extern "C" {
 int main(int argc, char *argv[])
 {
 	rc_initialize();
+	int freq = 15*1000;
+        rc_set_pinmux_mode(3,PINMUX_PWM);
+        rc_pwm_init(0,freq);
+        rc_pwm_set_duty(0,'B', 0.0);
+
 	rc_set_pinmux_mode(inhibit_pin, PINMUX_GPIO);
 	rc_set_pinmux_mode(LED_pin, PINMUX_GPIO);
 	rc_gpio_export(inhibit_pin);
@@ -26,11 +31,11 @@ int main(int argc, char *argv[])
 	while(entry != -1){
 		float cur_monitor_val = rc_adc_volt(cur_monitor_pin);
 		printf("\nEnter a value 0/1 for LED: ");
-		scanf("%d", entry);
+		scanf("%i", &entry);
 		rc_gpio_set_value(LED_pin, entry);
 
 		printf("\nEnter a value 0/1 for inhibit: ");
-		scanf("%d", entry);
+		scanf("%i", &entry);
 		rc_gpio_set_value(inhibit_pin, entry);
 
 		printf("\nCurrent Monitor Value: %i", cur_monitor_val);
